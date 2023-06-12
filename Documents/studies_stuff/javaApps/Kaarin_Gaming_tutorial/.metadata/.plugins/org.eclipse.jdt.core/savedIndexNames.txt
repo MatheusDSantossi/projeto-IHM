@@ -1,0 +1,4 @@
+INDEX VERSION 1.131+C:\Users\Iraide\Documents\studies_stuff\javaApps\Kaarin_Gaming_tutorial\.metadata\.plugins\org.eclipse.jdt.core
+1865797976.index
+360538084.index
+1488180064.index

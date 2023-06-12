@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;entities.EnemtManager&apos; to &apos;EnemyManager&apos;&#x0D;&#x0A;- Original project: &apos;PlataformerTutorial&apos;&#x0D;&#x0A;- Original element: &apos;entities.EnemtManager&apos;&#x0D;&#x0A;- Renamed element: &apos;entities.EnemyManager&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;EnemtManager&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;entities{EnemtManager.java[EnemtManager" matchStrategy="1" name="EnemyManager" qualified="false" references="true" similarDeclarations="false" stamp="1684527923090" textual="false" version="1.0"/>
+</session>

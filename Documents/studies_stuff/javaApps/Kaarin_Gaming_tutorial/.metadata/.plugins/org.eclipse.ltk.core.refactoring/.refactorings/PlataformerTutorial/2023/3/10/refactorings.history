@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename method &apos;main.GamePanel.getRndColor()&apos; to &apos;newColor&apos;&#x0D;&#x0A;- Original project: &apos;PlataformerTutorial&apos;&#x0D;&#x0A;- Original element: &apos;main.GamePanel.getRndColor()&apos;&#x0D;&#x0A;- Renamed element: &apos;main.GamePanel.newColor()&apos;&#x0D;&#x0A;- Update references to refactored element" delegate="false" deprecate="false" description="Rename method &apos;getRndColor&apos;" flags="589826" id="org.eclipse.jdt.ui.rename.method" input="/src&lt;main{GamePanel.java[GamePanel~getRndColor" name="newColor" references="true" stamp="1678135228230" version="1.0"/>
+</session>
