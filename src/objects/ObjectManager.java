@@ -12,18 +12,19 @@ import main.Game;
 import utilz.LoadSave;
 
 import static utilz.Constants.ObjectCostants.*;
-import static utilz.HelpMethods.CanCannonSeePlayer;
+import static utilz.HelpMethods.*;
+import static utilz.Constants.Projectiles.*;
 
 public class ObjectManager {
-
 	private Playing playing;
 	private BufferedImage[][] potionImgs, containerImgs;
 	private BufferedImage[] cannonImgs;
-	private BufferedImage spikeImg;
+	private BufferedImage spikeImg, cannonBallImg;
 	private ArrayList<Potion> potions;
 	private ArrayList<GameContainer> containers;
 	private ArrayList<Spike> spikes;
 	private ArrayList<Cannon> cannons;
+	private ArrayList<Projectile> projectiles = new ArrayList<>();
 
 	public ObjectManager(Playing playing) {
 
@@ -104,6 +105,18 @@ public class ObjectManager {
 
 	}
 
+	public void loadObject(Level newLevel) {
+
+//		potions = newLevel.getPotions();
+		potions = new ArrayList<>(newLevel.getPotions());
+//		containers = newLevel.getContainers();
+		containers = new ArrayList<>(newLevel.getContainers());
+		spikes = newLevel.getSpikes();
+		cannons = newLevel.getCannons();
+		projectiles.clear();
+
+	}
+
 	private void loadImgs() {
 
 		BufferedImage potionSprite = LoadSave.GetSpriteAtlas(LoadSave.POTION_ATLAS);
@@ -122,11 +135,13 @@ public class ObjectManager {
 
 		spikeImg = LoadSave.GetSpriteAtlas(LoadSave.TRAP_ATLAS);
 
-		cannonImgs = new BufferedImage[7];
 		BufferedImage temp = LoadSave.GetSpriteAtlas(LoadSave.CANNON_ATLAS);
+		cannonImgs = new BufferedImage[7];
 
-		for (int i = 0; i > cannonImgs.length; i++)
+		for (int i = 0; i < cannonImgs.length; i++)
 			cannonImgs[i] = temp.getSubimage(i * 40, 0, 40, 26);
+
+		cannonBallImg = LoadSave.GetSpriteAtlas(LoadSave.CANNON_BALL);
 
 	}
 
@@ -141,6 +156,27 @@ public class ObjectManager {
 				gc.update();
 
 		updateCannons(lvlData, player);
+		updateProjectiles(lvlData, player);
+
+	}
+
+	private void updateProjectiles(int[][] lvlData, Player player) {
+
+		for (Projectile p : projectiles) {
+			if (p.isActive()) {
+				p.updatePos();
+
+				if (p.getHitbox().intersects(player.getHitbox())) {
+					player.changeHealth(-25);
+					p.setActive(false);
+
+				} else if (IsProjectilesHittingLevel(p, lvlData)) {
+
+					p.setActive(false);
+
+				}
+			}
+		}
 
 	}
 
@@ -153,7 +189,7 @@ public class ObjectManager {
 
 		if (c.getObjType() == CANNON_LEFT) {
 
-			if (c.getHitbox().x > player.getHitbox().y)
+			if (c.getHitbox().x > player.getHitbox().x)
 				return true;
 
 		} else if (c.getHitbox().x < player.getHitbox().x)
@@ -165,17 +201,20 @@ public class ObjectManager {
 	private void updateCannons(int lvlData[][], Player player) {
 
 		for (Cannon c : cannons) {
-			System.out.println("CANNON EXIST");
+
 			if (!c.doAnimation)
 				if (c.getTileY() == player.getTileY())
 					if (isPlayerInRange(c, player))
 						if (isPlayerInfrontOfCannon(c, player))
 							if (CanCannonSeePlayer(lvlData, player.getHitbox(), c.getHitbox(), c.getTileY())) {
 
-								shootCannon(c);
+//								shootCannon(c);
+								c.setAnimation(true);
 
 							}
 			c.update();
+			if (c.getAniIndex() == 4 && c.getAniTick() == 0)
+				shootCannon(c);
 
 		}
 
@@ -191,6 +230,13 @@ public class ObjectManager {
 
 		c.setAnimation(true);
 
+		int dir = 1;
+
+		if (c.getObjType() == CANNON_LEFT)
+			dir = -1;
+
+		projectiles.add(new Projectile((int) c.getHitbox().x, (int) c.getHitbox().y, dir));
+
 	}
 
 	public void draw(Graphics g, int xLvlOffset) {
@@ -199,6 +245,15 @@ public class ObjectManager {
 		drawContainers(g, xLvlOffset);
 		drawTrap(g, xLvlOffset);
 		drawCannons(g, xLvlOffset);
+		drawProjectiles(g, xLvlOffset);
+	}
+
+	private void drawProjectiles(Graphics g, int xLvlOffset) {
+
+		for (Projectile p : projectiles)
+			if (p.isActive())
+				g.drawImage(cannonBallImg, (int) (p.getHitbox().x - xLvlOffset), (int) (p.getHitbox().y),
+						CANNON_BALL_WIDTH, CANNON_BALL_WIDTH, null);
 
 	}
 
@@ -260,17 +315,6 @@ public class ObjectManager {
 						(int) (p.getHitbox().y - p.getyDrawOffset()), POTION_WIDTH, POTION_HEIGHT, null);
 
 			}
-
-	}
-
-	public void loadObject(Level newLevel) {
-
-//		potions = newLevel.getPotions();
-		potions = new ArrayList<>(newLevel.getPotions());
-//		containers = newLevel.getContainers();
-		containers = new ArrayList<>(newLevel.getContainers());
-		spikes = newLevel.getSpikes();
-		cannons = newLevel.getCannons();
 
 	}
 
