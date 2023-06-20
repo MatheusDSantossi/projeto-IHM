@@ -1,10 +1,13 @@
 package main;
 
-import java.awt.Graphics; 
+import java.awt.Graphics;
 
+import audio.AudioPlayer;
+import gameStates.GameOptions;
 import gameStates.GameState;
 import gameStates.Menu;
 import gameStates.Playing;
+import ui.AudioOptions;
 import utilz.LoadSave;
 
 public class Game implements Runnable {
@@ -17,6 +20,9 @@ public class Game implements Runnable {
 	
 	private Playing playing;
 	private Menu menu;
+	private GameOptions gameOptions;
+	private AudioOptions audioOptions;
+	private AudioPlayer audioPlayer;		
 
 	public final static int TILES_DEFAULT_SIZE = 32;
 	public final static float SCALE = 1f; // 32 * 1.5 = 48??;
@@ -46,8 +52,11 @@ public class Game implements Runnable {
 
 	private void initClasses() {
 
+		audioOptions = new AudioOptions(this);
+		audioPlayer = new AudioPlayer();
 		menu = new Menu(this);
 		playing = new Playing(this);
+		gameOptions = new GameOptions(this);
 		
 	}
 
@@ -73,6 +82,12 @@ public class Game implements Runnable {
 		case PLAYING:
 			playing.update();
 			break;
+		case OPTIONS:
+			gameOptions.update();
+			break;
+			
+		case QUIT:
+			System.exit(0);
 
 		default:
 			break;
@@ -96,7 +111,8 @@ public class Game implements Runnable {
 			break;
 			
 		case OPTIONS:
-//			break;
+			gameOptions.draw(g);
+			break;
 		case QUIT:
 			System.exit(0);
 			break;
@@ -191,5 +207,22 @@ public class Game implements Runnable {
 		return playing;
 		
 	}
+	
+	public GameOptions getGameOptions() {
+		
+		return gameOptions;
+		
+	}
+	
+	public AudioOptions getAudioOptions() {
+		
+		return audioOptions;
+		
+	}
 
+	public AudioPlayer getAudioPlayer() {
+		return audioPlayer;
+	}
+
+		
 }

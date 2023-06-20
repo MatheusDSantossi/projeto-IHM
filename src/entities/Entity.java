@@ -82,4 +82,10 @@ public abstract class Entity {
 
 	}
 	
+	public int getCurrentHealth() {
+		
+		return currentHealth;
+		
+	}
+	
 }
