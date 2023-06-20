@@ -36,7 +36,7 @@ public class EnemyManager {
 	public void update(int[][] lvlData, Player player) {
 
 		boolean isAnyActive = false;
-		
+
 		for (Crabby c : crabbies) {
 
 			if (c.isActive()) {
@@ -45,8 +45,8 @@ public class EnemyManager {
 				isAnyActive = true;
 			}
 		}
-		
-		if(!isAnyActive)
+
+		if (!isAnyActive)
 			playing.setLevelCompleted(true);
 
 	}
@@ -77,12 +77,12 @@ public class EnemyManager {
 
 		for (Crabby c : crabbies)
 			if (c.isActive()) {
+				if (c.getCurrentHealth() > 0)
+					if (attackBox.intersects(c.getHitbox())) {
 
-				if (attackBox.intersects(c.getHitbox())) {
-
-					c.hurt(10); // 10 damage
-					return;
-				}
+						c.hurt(10); // 10 damage
+						return;
+					}
 			}
 
 	}

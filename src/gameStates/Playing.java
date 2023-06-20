@@ -47,6 +47,7 @@ public class Playing extends State implements StateMethods {
 
 	private boolean gameOver;
 	private boolean lvlCompleted = false;
+	private boolean playerDying;
 
 	public Playing(Game game) {
 		super(game);
@@ -71,9 +72,10 @@ public class Playing extends State implements StateMethods {
 
 	public void loadNextLevel() {
 		
-		resetAll();
+//		resetAll();
 		levelManager.loadNextLevel();
 		player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
+		resetAll();
 		
 	}
 	
@@ -121,6 +123,14 @@ public class Playing extends State implements StateMethods {
 
 			levelCompletedOverlay.update();
 
+		} else if(gameOver) {
+			
+			gameOverOverlay.update();
+			
+		} else if(playerDying) {
+			
+			player.update();
+			
 		} else if (!gameOver) {
 
 			levelManager.update();
@@ -222,6 +232,7 @@ public class Playing extends State implements StateMethods {
 		gameOver = false;
 		paused = false;
 		lvlCompleted = false;
+		playerDying = false;
 		player.resetAll();
 		enemyManager.resetAllEnemies();
 		objectManager.resetAllObjects();
@@ -266,6 +277,9 @@ public class Playing extends State implements StateMethods {
 			if (e.getButton() == MouseEvent.BUTTON1)
 
 				player.setAttacking(true);
+		
+			else if(e.getButton() == MouseEvent.BUTTON3)
+				player.powerAttack();
 
 	}
 
@@ -287,6 +301,10 @@ public class Playing extends State implements StateMethods {
 				levelCompletedOverlay.mousPressed(e);
 
 			}
+		} else {
+			
+			gameOverOverlay.mousePressed(e);
+			
 		}
 	}
 
@@ -301,6 +319,10 @@ public class Playing extends State implements StateMethods {
 				levelCompletedOverlay.mouseReleased(e);
 
 			}
+		}else {
+			
+			gameOverOverlay.mouseReleased(e);
+			
 		}
 	}
 
@@ -314,6 +336,10 @@ public class Playing extends State implements StateMethods {
 
 				levelCompletedOverlay.mouseMoved(e);
 			}
+		}else {
+			
+			gameOverOverlay.mouseMoved(e);
+			
 		}
 	}
 
@@ -391,6 +417,9 @@ public class Playing extends State implements StateMethods {
 
 		this.lvlCompleted = levelCompleted;
 		
+		if(lvlCompleted)
+			game.getAudioPlayer().lvlCompleted();
+		
 	}
 	
 	public void setLvlOffset(int lvlOffset) {
@@ -432,6 +461,12 @@ public class Playing extends State implements StateMethods {
 	public LevelManager getLevelManager() {
 		
 		return levelManager;
+		
+	}
+
+	public void setPlayerDying(boolean playerDying) {
+
+		this.playerDying = playerDying;
 		
 	}
 	

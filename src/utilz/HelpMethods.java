@@ -14,6 +14,7 @@ import main.Game;
 import objects.Cannon;
 import objects.GameContainer;
 import objects.Potion;
+import objects.Projectile;
 import objects.Spike;
 
 public class HelpMethods {
@@ -50,6 +51,12 @@ public class HelpMethods {
 
 		return IsTileSolid((int) xIndex, (int) yIndex, lvlData);
 
+	}
+	
+	public static boolean IsProjectilesHittingLevel(Projectile p, int[][] lvlData) {
+		
+		return IsSolid(p.getHitbox().x + p.getHitbox().width / 2, p.getHitbox().y + p.getHitbox().height / 2, lvlData);
+		
 	}
 
 	public static boolean IsTileSolid(int xTile, int yTile, int[][] lvlData) {
@@ -157,14 +164,12 @@ public class HelpMethods {
 	
 	public static boolean IsAllTilesClear(int xStart, int xEnd, int y, int[][] lvlData) {
 		
-		if(IsAllTilesClear(xStart, xEnd, y, lvlData))
-		
-			for(int i = 0; i < xEnd - xStart; i++) {
-				
-				if(IsTileSolid(xStart * i, y, lvlData))
-					return false;
-			}
-		
+		for(int i = 0; i < xEnd - xStart; i++) {
+			
+			if(IsTileSolid(xStart + i, y, lvlData))
+				return false;
+		}
+	
 		return true;
 		
 		
@@ -172,14 +177,14 @@ public class HelpMethods {
 	
 	public static boolean IsAllTilesWalkable(int xStart, int xEnd, int y, int[][] lvlData) {
 
-		for (int i = 0; i < xEnd - xStart; i++) {
-
-			if (IsTileSolid(xStart + i, y, lvlData)) 
-				return false;
+		if(IsAllTilesClear(xStart, xEnd, y, lvlData)) {
+			
+			for(int i = 0; i < xEnd - xStart; i++) {
 				
-			if (!IsTileSolid(xStart + i, y + 1, lvlData))
-				return false;
+				if(!IsTileSolid(xStart + i, y + 1, lvlData))
+					return false;
 				
+			}
 			
 		}
 
@@ -202,6 +207,9 @@ public class HelpMethods {
 			return IsAllTilesWalkable(firstXTile, secondXTile, yTile, lvlData);
 
 	}
+	
+	
+	
 	
 	public static int[][] GetLevelData(BufferedImage img) {
 
