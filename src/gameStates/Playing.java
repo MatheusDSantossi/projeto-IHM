@@ -7,11 +7,13 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Float;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 
 import entities.EnemyManager;
 import entities.Player;
 import levels.LevelManager;
+import main.CodePanel;
 import main.Game;
 import objects.ObjectManager;
 import ui.GameOverOverlay;
@@ -47,6 +49,7 @@ public class Playing extends State implements StateMethods {
 
 	private boolean gameOver;
 	private boolean lvlCompleted = false;
+	private boolean playerDying;
 
 	public Playing(Game game) {
 		super(game);
@@ -63,31 +66,36 @@ public class Playing extends State implements StateMethods {
 			smallCloudsPos[i] = (int) (90 * Game.SCALE + rnd.nextInt((int) (100 * Game.SCALE)));
 
 		}
-		
+
 		calcLvlOffset();
 		loadStartLevel();
 
 	}
 
+	public void init() {
+		game.getGamePanel().setPlaying(this); // Add this line to set the Playing instance in GamePanel
+	}
+
 	public void loadNextLevel() {
-		
-		resetAll();
+
+//		resetAll();
 		levelManager.loadNextLevel();
 		player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
-		
+		resetAll();
+
 	}
-	
+
 	private void loadStartLevel() {
 
 		enemyManager.loadEnemies(levelManager.getCurrentLevel());
 		objectManager.loadObject(levelManager.getCurrentLevel());
-				
+
 	}
 
 	private void calcLvlOffset() {
 
 		maxLvlOffsetX = levelManager.getCurrentLevel().getLvlOffset();
-		
+
 	}
 
 	private void initClasses() {
@@ -97,12 +105,12 @@ public class Playing extends State implements StateMethods {
 		enemyManager = new EnemyManager(this);
 
 		objectManager = new ObjectManager(this);
-		
+
 		player = new Player(200, 200, (int) (64 * Game.SCALE), (int) (40 * Game.SCALE), this);
 
 		player.loadLvlData(levelManager.getCurrentLevel().getLevelData());
 		player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
-		
+
 		pauseOverlay = new PauseOverlay(this);
 		gameOverOverlay = new GameOverOverlay(this);
 
@@ -121,12 +129,20 @@ public class Playing extends State implements StateMethods {
 
 			levelCompletedOverlay.update();
 
+		} else if (gameOver) {
+
+			gameOverOverlay.update();
+
+		} else if (playerDying) {
+
+			player.update();
+
 		} else if (!gameOver) {
 
 			levelManager.update();
-			
+
 			objectManager.update(levelManager.getCurrentLevel().getLevelData(), player);
-			
+
 			player.update();
 			enemyManager.update(levelManager.getCurrentLevel().getLevelData(), player);
 			checkCloseToBorder();
@@ -184,7 +200,7 @@ public class Playing extends State implements StateMethods {
 		enemyManager.draw(g, xLvlOffset);
 
 		objectManager.draw(g, xLvlOffset);
-		
+
 		if (paused) {
 
 			g.setColor(new Color(0, 0, 0, 150));
@@ -222,6 +238,7 @@ public class Playing extends State implements StateMethods {
 		gameOver = false;
 		paused = false;
 		lvlCompleted = false;
+		playerDying = false;
 		player.resetAll();
 		enemyManager.resetAllEnemies();
 		objectManager.resetAllObjects();
@@ -233,11 +250,11 @@ public class Playing extends State implements StateMethods {
 		this.gameOver = gameOver;
 
 	}
-	
+
 	public void checkObjectHit(Rectangle2D.Float attackBox) {
 
 		objectManager.checkObjectHit(attackBox);
-		
+
 	}
 
 	public void checkEnemyHit(Rectangle2D.Float attackBox) {
@@ -247,17 +264,17 @@ public class Playing extends State implements StateMethods {
 	}
 
 	public void checkPotionTouched(Rectangle2D.Float hitBox) {
-		
+
 		objectManager.checkObjectTouched(hitBox);
-		
+
 	}
 
 	public void checkSpikesToched(Player p) {
 
 		objectManager.checkpiesTouced(p);
-		
+
 	}
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
@@ -266,6 +283,9 @@ public class Playing extends State implements StateMethods {
 			if (e.getButton() == MouseEvent.BUTTON1)
 
 				player.setAttacking(true);
+
+			else if (e.getButton() == MouseEvent.BUTTON3)
+				player.powerAttack();
 
 	}
 
@@ -287,6 +307,10 @@ public class Playing extends State implements StateMethods {
 				levelCompletedOverlay.mousPressed(e);
 
 			}
+		} else {
+
+			gameOverOverlay.mousePressed(e);
+
 		}
 	}
 
@@ -301,6 +325,10 @@ public class Playing extends State implements StateMethods {
 				levelCompletedOverlay.mouseReleased(e);
 
 			}
+		} else {
+
+			gameOverOverlay.mouseReleased(e);
+
 		}
 	}
 
@@ -314,11 +342,70 @@ public class Playing extends State implements StateMethods {
 
 				levelCompletedOverlay.mouseMoved(e);
 			}
+		} else {
+
+			gameOverOverlay.mouseMoved(e);
+
 		}
 	}
 
+//	@Override
+//	public void keyPressed(KeyEvent e) {
+//
+//		if (gameOver)
+//			gameOverOverlay.keyPressed(e);
+//
+//		else
+//
+//			switch (e.getKeyCode()) {
+//
+//			case KeyEvent.VK_W:
+////				player.setUp(true);
+//				break;
+//			
+////			case KeyEvent.VK_UP:
+////				System.out.println("UPPING THE CODE");
+////				break;
+////
+////			case KeyEvent.VK_DOWN:
+////				System.out.println("DOWNING THE CODE");
+////				break;
+//
+//				
+//			case KeyEvent.VK_S:
+//
+////				player.setDown(true);
+//				break;
+//
+//			case KeyEvent.VK_A:
+//				player.setLeft(true);
+//				break;
+//
+//			case KeyEvent.VK_D:
+//				player.setRight(true);
+//				break;
+//
+//			case KeyEvent.VK_SPACE:
+//				player.setJump(true);
+//				break;
+//
+//			case KeyEvent.VK_ESCAPE:
+//				paused = !paused;
+//				break;
+//
+//			case KeyEvent.VK_BACK_SPACE:
+//				GameState.state = GameState.MENU;
+//			}
+//	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
+
+		System.out.println("PLAYER CAN MOVE? " + CodePanel.playerCanMove);
+
+//		if (!CodePanel.playerCanMove) {
+//			return; // Exit the method if the player cannot move
+//		}
 
 		if (gameOver)
 			gameOverOverlay.keyPressed(e);
@@ -328,12 +415,20 @@ public class Playing extends State implements StateMethods {
 			switch (e.getKeyCode()) {
 
 			case KeyEvent.VK_W:
-//				player.setUp(true);
+				// player.setUp(true);
 				break;
+
+			// case KeyEvent.VK_UP:
+			// System.out.println("UPPING THE CODE");
+			// break;
+			//
+			// case KeyEvent.VK_DOWN:
+			// System.out.println("DOWNING THE CODE");
+			// break;
 
 			case KeyEvent.VK_S:
 
-//				player.setDown(true);
+				// player.setDown(true);
 				break;
 
 			case KeyEvent.VK_A:
@@ -355,6 +450,7 @@ public class Playing extends State implements StateMethods {
 			case KeyEvent.VK_BACK_SPACE:
 				GameState.state = GameState.MENU;
 			}
+
 	}
 
 	@Override
@@ -390,15 +486,18 @@ public class Playing extends State implements StateMethods {
 	public void setLevelCompleted(boolean levelCompleted) {
 
 		this.lvlCompleted = levelCompleted;
-		
+
+		if (lvlCompleted)
+			game.getAudioPlayer().lvlCompleted();
+
 	}
-	
+
 	public void setLvlOffset(int lvlOffset) {
-		
+
 		this.maxLvlOffsetX = lvlOffset;
-		
+
 	}
-	
+
 	public void unpauseGame() {
 
 		paused = false;
@@ -416,23 +515,29 @@ public class Playing extends State implements StateMethods {
 		return player;
 
 	}
-	
+
 	public EnemyManager getEnemyManager() {
-		
+
 		return enemyManager;
-		
+
 	}
 
 	public ObjectManager getObjectManager() {
-		
+
 		return objectManager;
-		
+
 	}
-	
+
 	public LevelManager getLevelManager() {
-		
+
 		return levelManager;
-		
+
 	}
-	
+
+	public void setPlayerDying(boolean playerDying) {
+
+		this.playerDying = playerDying;
+
+	}
+
 }

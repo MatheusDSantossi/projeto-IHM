@@ -1,8 +1,9 @@
 package main;
 
-import java.awt.Color; 
+import java.awt.Color;    
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import gameStates.Playing;
 import inputs.KeyBoardInputs;
 import inputs.MouseInputs;
 
@@ -21,7 +23,8 @@ import static main.Game.GAME_WIDTH;
 public class GamePanel extends JPanel {
 
 	public Game game;
-
+	private Playing playing;
+	
 	private MouseInputs mouseInputs;
 //	private float xDelta = 100, yDelta = 100;
 //	private float xDir = 0.003f, yDir = 0.003f;
@@ -57,7 +60,17 @@ public class GamePanel extends JPanel {
 
 		setPanelSize();
 
-		addKeyListener(new KeyBoardInputs(this));
+		CodePanel codePanel = new CodePanel(game);
+		
+		// Add the KeyListener to the CodePanel
+        codePanel.addKeyListener(codePanel.getKeyboardInputs());
+
+        // Make the CodePanel focusable and request focus
+        codePanel.setFocusable(true);
+        codePanel.requestFocus();
+		
+		addKeyListener(new KeyBoardInputs(this, codePanel));
+//		addKeyListener(new KeyBoardInputs(this, game.getCodePanel(), game.getPlaying()));
 		addMouseListener(mouseInputs);
 		addMouseMotionListener(mouseInputs);
 
@@ -336,6 +349,10 @@ public class GamePanel extends JPanel {
 
 		return game;
 
+	}
+
+	public void setPlaying(Playing playing) {
+		this.playing = playing;
 	}
 
 }

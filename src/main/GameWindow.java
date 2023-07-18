@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.FlowLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
@@ -10,14 +11,21 @@ public class GameWindow {
 
 	private JFrame jframe;
 	
-	public GameWindow(GamePanel gamePanel) {
+	public GameWindow(GamePanel gamePanel, CodePanel codePanel) {
 	
 		jframe = new JFrame();
 		
 //		jframe.setSize(400, 400);
 		
+		 // Set the layout manager to FlowLayout
+	    jframe.setLayout(new FlowLayout());
+		
 		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		
+		
+		// adding to test
+		jframe.add(codePanel);
 		jframe.add(gamePanel);
 		
 		jframe.setFocusable(true);
