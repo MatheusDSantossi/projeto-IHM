@@ -10,11 +10,15 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import gameStates.Playing;
 import main.CodePanel;
+import utilz.Constants;
+import utilz.LoadSave;
 
 public class CodeBlock extends JLabel {
 
@@ -30,13 +34,21 @@ public class CodeBlock extends JLabel {
 	private Playing playing;
 
 	private CodePanel codePanel;
+//	private ImageIcon i = new ImageIcon(LoadSave.GetSpriteAtlas(LoadSave.CODE_BLOCK_BACKGROUND));
 
 	public CodeBlock(String code, boolean codeFinished, CodePanel codePanel) {
+//	public CodeBlock(String code, ImageIcon i, boolean codeFinished, CodePanel codePanel) {
 		super(code);
 
 		this.codePanel = codePanel;
 
+//		setText(code);
+
 		changeBlockColor(codeFinished);
+
+//		ImageIcon i = new ImageIcon(LoadSave.GetSpriteAtlas(LoadSave.CODE_BLOCK_BACKGROUND));
+//		
+//		setIcon(i);
 
 		setFocusable(true);
 
@@ -62,10 +74,10 @@ public class CodeBlock extends JLabel {
 
 	private void paintMethod() {
 
-		setOpaque(true);
+		setOpaque(false);
 		setBackground(Color.LIGHT_GRAY);
 		setPreferredSize(new Dimension(150, 40));
-		setFont(new Font("Arial", Font.PLAIN, 15));
+		setFont(new Font("Arial", Font.BOLD, 15));
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -102,29 +114,8 @@ public class CodeBlock extends JLabel {
 //	private void verifyCode(CodeBlock selectedBlock) {
 	private void verifyCode(ArrayList<String> correctedOrder) {
 
-//		dict.put(correctBlockIndex, selectedBlock.getText());
+		codePanel.getGame().getPlaying().getPlayer().move(correctedOrder);
 
-		for (String codeBlockOrder : correctedOrder) {
-//		for(int i = 0; i < correctedOrder.size(); i++) {
-			System.out.println(codeBlockOrder);
-			switch (codeBlockOrder) {
-			case "MrPigy.moveToClosestThree();":
-
-				System.out.println("Moving to closest Three");
-				break;
-			case "MrPigy.jump();":
-
-				System.out.println("Jumping!!");
-				break;
-			case "MrPigy.attack();":
-
-				System.out.println("Attacking");
-				break;
-			default:
-				System.out.println("another move");
-			}
-
-		}
 
 	}
 

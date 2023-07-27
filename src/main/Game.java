@@ -6,27 +6,31 @@ import audio.AudioPlayer;
 import gameStates.GameOptions;
 import gameStates.GameState;
 import gameStates.Menu;
+import gameStates.MenuCodePanel;
 import gameStates.Playing;
 import ui.AudioOptions;
 import utilz.LoadSave;
 
 public class Game implements Runnable {
 
+	private boolean codePanelInitialized = false; // Add a flag to track if CodePanel is initialized
+
 	private GameWindow gameWindow;
 	private GamePanel gamePanel;
-	
+
 	// adding to test
 	private CodePanel codePanel;
-	
+
 	private Thread gameThread;
 	private final int FPS_SET = 120;
 	private final int UPS_SET = 200;
-	
+
 	private Playing playing;
 	private Menu menu;
+//	private MenuCodePanel menuCodePanel;
 	private GameOptions gameOptions;
 	private AudioOptions audioOptions;
-	private AudioPlayer audioPlayer;		
+	private AudioPlayer audioPlayer;
 
 	public final static int TILES_DEFAULT_SIZE = 32;
 	public final static float SCALE = 1f; // 32 * 1.5 = 48??;
@@ -36,21 +40,29 @@ public class Game implements Runnable {
 	public final static int GAME_WIDTH = TILES_SIZE * TILES_IN_WIDTH;
 	public final static int GAME_HEIGHT = TILES_SIZE * TILES_IN_HEIGHT;
 
+	public final static int CODE_PANEL_WIDTH = (int) (300 * SCALE);
+//	public final static int CODE_PANEL_HEIGHT = (int) (80 * SCALE);
+	
 	public Game() {
 
 //		LoadSave.GetAllLevels();
-		
-		initClasses();
+
+//		initClasses();
 
 		gamePanel = new GamePanel(this);
-		
+
 		// adding to test
 		codePanel = new CodePanel(this);
 
+		initClasses();
+
 		gameWindow = new GameWindow(gamePanel, codePanel);
+//		gameWindow = new GameWindow(gamePanel);
+
+//		initClasses();
 
 		gamePanel.setFocusable(true);
-		
+
 		gamePanel.requestFocus();
 
 		startGameLoop();
@@ -62,9 +74,12 @@ public class Game implements Runnable {
 		audioOptions = new AudioOptions(this);
 		audioPlayer = new AudioPlayer();
 		menu = new Menu(this);
+
+//		menuCodePanel = new MenuCodePanel(this);
+
 		playing = new Playing(this);
 		gameOptions = new GameOptions(this);
-		
+
 	}
 
 	private void startGameLoop() {
@@ -88,11 +103,16 @@ public class Game implements Runnable {
 
 		case PLAYING:
 			playing.update();
+//			if (!codePanelInitialized) {
+//				playing.initializeCodePanel();
+//				codePanelInitialized = true;
+//				
+//			}
 			break;
 		case OPTIONS:
 			gameOptions.update();
 			break;
-			
+
 		case QUIT:
 			System.exit(0);
 
@@ -116,7 +136,7 @@ public class Game implements Runnable {
 		case PLAYING:
 			playing.draw(g);
 			break;
-			
+
 		case OPTIONS:
 			gameOptions.draw(g);
 			break;
@@ -125,7 +145,7 @@ public class Game implements Runnable {
 			break;
 		default:
 			break;
-			
+
 		}
 	}
 
@@ -195,36 +215,36 @@ public class Game implements Runnable {
 
 	public void windowFocusLost() {
 
-		if(GameState.state == GameState.PLAYING) {
-			
+		if (GameState.state == GameState.PLAYING) {
+
 			playing.getPlayer().resetDirBooleans();
-			
+
 		}
 
 	}
-	
+
 	public Menu getMenu() {
-		
+
 		return menu;
-		
+
 	}
-	
+
 	public Playing getPlaying() {
-		
+
 		return playing;
-		
+
 	}
-	
+
 	public GameOptions getGameOptions() {
-		
+
 		return gameOptions;
-		
+
 	}
-	
+
 	public AudioOptions getAudioOptions() {
-		
+
 		return audioOptions;
-		
+
 	}
 
 	public AudioPlayer getAudioPlayer() {
@@ -235,9 +255,12 @@ public class Game implements Runnable {
 		return gamePanel;
 	}
 
+	public GameWindow getGameWindow() {
+		return gameWindow;
+	}
+
 	public CodePanel getCodePanel() {
 		return codePanel;
 	}
 
-	
 }

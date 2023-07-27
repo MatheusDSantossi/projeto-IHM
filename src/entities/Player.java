@@ -5,11 +5,18 @@ import static utilz.Constants.PlayerConstants.*;
 
 import static utilz.HelpMethods.*;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.TimerTask;
+
+import java.util.Timer;
 
 import audio.AudioPlayer;
 import gameStates.Playing;
@@ -79,6 +86,8 @@ public class Player extends Entity {
 	private int powerGrowSpeed = 15;
 	private int powerGrowTick;
 
+	private Robot robot;
+
 	public Player(float x, float y, int width, int height, Playing playing) {
 		super(x, y, width, height);
 
@@ -92,6 +101,23 @@ public class Player extends Entity {
 
 		initHitbox(20, 27);
 		initAttackBox();
+
+		initRobot();
+
+	}
+
+	private void initRobot() {
+
+		try {
+			robot = new Robot();
+
+			// Simulate pressing the "D" key
+//			robot.keyPress(KeyEvent.VK_D);
+//			robot.keyRelease(KeyEvent.VK_D);
+
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -109,7 +135,7 @@ public class Player extends Entity {
 
 		attackBox = new Rectangle2D.Float(x, y, (int) (20 * Game.SCALE), (int) (20 * Game.SCALE));
 		resetAttackBox();
-		
+
 	}
 
 	public void update() {
@@ -126,7 +152,6 @@ public class Player extends Entity {
 				aniIndex = 0;
 				playing.setPlayerDying(true);
 				playing.getGame().getAudioPlayer().playEffect(AudioPlayer.DIE);
-				;
 
 			} else if (aniIndex == GetSpriteAmount(DEAD) - 1 && aniTick >= ANI_SPEED - 1) {
 
@@ -386,6 +411,50 @@ public class Player extends Entity {
 
 	}
 
+	public void move(ArrayList<String> correctedOrder) {
+
+		for (String codeBlockOrder : correctedOrder) {
+			
+			switch (codeBlockOrder) {
+
+			case "MrPigy.moveToClosestThree();":
+//				setRight(true);
+				setMoveRight(true);
+//				try {
+//					Thread.sleep(2000);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+				setMoveRight(false);
+				break;
+
+			case "MrPigy.jump(1);":
+				setJump(true);
+				
+				break;
+
+			case "MrPigy.attack(1);":
+				setAttacking(true);
+				
+				break;
+			}
+
+		}
+
+	}
+
+	private void setMoveRight(boolean playerWillMove) {
+		
+		if(playerWillMove) {
+		
+			this.updateXPos(0.75f);
+			return;
+		}
+		
+		return;
+		
+	}
+
 	private void updatePos() {
 
 		moving = false;
@@ -431,13 +500,12 @@ public class Player extends Entity {
 		if (powerAttackActive) {
 			if ((!left && !right) || (left && right)) {
 
-					if (flipW == -1)
-						xSpeed = -walkSpeed;
+				if (flipW == -1)
+					xSpeed = -walkSpeed;
 
-					else
-						xSpeed = walkSpeed;
-				}
-		
+				else
+					xSpeed = walkSpeed;
+			}
 
 			xSpeed *= 3;
 
@@ -729,16 +797,16 @@ public class Player extends Entity {
 
 		hitbox.x = x;
 		hitbox.y = y;
-		
+
 		resetAttackBox();
 
 		if (!IsEntityOnFloor(hitbox, lvlData))
 			inAir = true;
 
 	}
-	
+
 	private void resetAttackBox() {
-		
+
 		if (flipW == 1) {
 
 			attackBox.x = hitbox.x + hitbox.width + (int) (Game.SCALE * 10);
@@ -748,7 +816,7 @@ public class Player extends Entity {
 			attackBox.x = hitbox.x - hitbox.width - (int) (Game.SCALE * 10);
 
 		}
-		
+
 	}
 
 	public int getTileY() {

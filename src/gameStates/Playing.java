@@ -10,11 +10,13 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
+import entities.CodeBlock;
 import entities.EnemyManager;
 import entities.Player;
 import levels.LevelManager;
 import main.CodePanel;
 import main.Game;
+import main.GameWindow;
 import objects.ObjectManager;
 import ui.GameOverOverlay;
 import ui.LevelCompletedOverlay;
@@ -51,10 +53,15 @@ public class Playing extends State implements StateMethods {
 	private boolean lvlCompleted = false;
 	private boolean playerDying;
 
+	private boolean playingStarted = false; // Add a flag to track if playing has started
+
+	private CodePanel codePanel; // Add the declaration of CodePanel here
+
 	public Playing(Game game) {
 		super(game);
 
 		initClasses();
+
 
 		backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.PLAYING_BG_IMG);
 		bigCloud = LoadSave.GetSpriteAtlas(LoadSave.BIG_CLOUDS);
@@ -72,8 +79,37 @@ public class Playing extends State implements StateMethods {
 
 	}
 
-	public void init() {
-		game.getGamePanel().setPlaying(this); // Add this line to set the Playing instance in GamePanel
+	// Add a method to initialize the CodePanel when the playing status begins
+//	public void initializeCodePanel() {
+////		codePanel = new CodePanel(game);
+//		codePanel = game.getCodePanel();
+//		game.getGameWindow().getJframe().add(codePanel);
+//		game.getGameWindow().getJframe().revalidate();
+//		game.getGameWindow().getJframe().repaint();
+//		
+//		codePanel.getGame().getGameWindow().getJframe().revalidate();
+//		codePanel.getGame().getGameWindow().getJframe().repaint();
+//		
+//		game.getGamePanel().repaint();
+//		
+//		codePanel.setVisible(true);
+//		
+//		System.out.println("WIDTH: " + codePanel.getWidth());
+//		System.out.println("HEIGHT: " +codePanel.getHeight());
+//		
+//		System.out.println("X: " + codePanel.getX());
+//		System.out.println("Y: " + codePanel.getY());
+//		
+//	}
+
+	void initCodePanelElements() {
+		
+		for(CodeBlock codeBlock : game.getCodePanel().getCodeBlocks()) {
+			
+			game.getCodePanel().add(codeBlock);
+			
+		}
+		
 	}
 
 	public void loadNextLevel() {
@@ -100,6 +136,8 @@ public class Playing extends State implements StateMethods {
 
 	private void initClasses() {
 
+//		GameWindow.codePanel
+
 		levelManager = new LevelManager(game);
 
 		enemyManager = new EnemyManager(this);
@@ -121,6 +159,12 @@ public class Playing extends State implements StateMethods {
 	@Override
 	public void update() {
 
+		
+		//if (playingStarted) {
+//		if(GameState.state == GameState.PLAYING) {
+//			initializeCodePanel(); // Call the method to initialize CodePanel
+//		}
+		
 		if (paused) {
 
 			pauseOverlay.update();
@@ -400,8 +444,6 @@ public class Playing extends State implements StateMethods {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-
-		System.out.println("PLAYER CAN MOVE? " + CodePanel.playerCanMove);
 
 //		if (!CodePanel.playerCanMove) {
 //			return; // Exit the method if the player cannot move

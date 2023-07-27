@@ -10,6 +10,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 import entities.Crabby;
 import main.Game;
@@ -30,6 +33,7 @@ public class LoadSave {
 	public static final String URM_BUTTONS = "urm_buttons.png";
 	public static final String VOLUME_BUTTONS = "volume_buttons.png";
 	public static final String MENU_BACKGROUND_IMG = "background_menu.png";
+//	public static final String MENU_BACKGROUND_IMG = "Treasure_Hunters_banner.gif";
 	public static final String PLAYING_BG_IMG = "playing_bg_img.png";
 	public static final String BIG_CLOUDS = "big_clouds.png";
 	public static final String SMALL_CLOUDS = "small_clouds.png";
@@ -46,11 +50,23 @@ public class LoadSave {
 	public static final String DEATH_SCREEN = "death_screen.png";
 	public static final String OPTIONS_MENU = "options_background.png";
 
+	public static final String MENU_BACKGROUND_CODE_PART = "background_menu_wider_code_part.png";
+	public static final String MENU_BACKGROUND_MENU_PART = "background_menu_wider_menu_part.png";
+	
+	public static JLabel gifAnimation(String fileName) {
+		
+		Icon imgIcon = new ImageIcon(LoadSave.class.getResource("/Treasure_Hunters_banner.gif"));
+		JLabel label = new JLabel(imgIcon);
+		
+		return label;
+		
+	}
+	
 	public static BufferedImage GetSpriteAtlas(String fileName) {
 
 		BufferedImage img = null;
 		InputStream is = LoadSave.class.getResourceAsStream("/" + fileName);
-
+		
 		try {
 
 			img = ImageIO.read(is);
