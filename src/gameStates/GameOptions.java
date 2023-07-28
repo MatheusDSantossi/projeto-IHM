@@ -32,7 +32,8 @@ public class GameOptions extends State implements StateMethods {
 
 	private void loadButtons() {
 
-		int menuX = (int) (387 * Game.SCALE);
+//		int menuX = (int) (387 * Game.SCALE);
+		int menuX = (int) (((Game.GAME_WIDTH / 3) - 30) * Game.SCALE);
 		
 		int menuY = (int) (325 * Game.SCALE);
 
@@ -49,7 +50,7 @@ public class GameOptions extends State implements StateMethods {
 		bgW = (int) (optionsBackgroundImg.getWidth() * Game.SCALE);
 		bgH = (int) (optionsBackgroundImg.getHeight() * Game.SCALE);
 
-		bgX = 100 - bgW / 2;
+		bgX = Game.GAME_WIDTH / 3 - bgW / 2;
 		bgY = (int) (33 * Game.SCALE);
 
 	}

@@ -110,6 +110,8 @@ public class Playing extends State implements StateMethods {
 			
 		}
 		
+		game.getCodePanel().revalidate();
+		
 	}
 
 	public void loadNextLevel() {

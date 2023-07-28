@@ -33,7 +33,7 @@ public class Game implements Runnable {
 	private AudioPlayer audioPlayer;
 
 	public final static int TILES_DEFAULT_SIZE = 32;
-	public final static float SCALE = 1f; // 32 * 1.5 = 48??;
+	public final static float SCALE = 1.3f; // 32 * 1.5 = 48??;
 	public final static int TILES_IN_WIDTH = 26;
 	public final static int TILES_IN_HEIGHT = 14;
 	public final static int TILES_SIZE = (int) (TILES_DEFAULT_SIZE * SCALE);
@@ -42,6 +42,10 @@ public class Game implements Runnable {
 
 	public final static int CODE_PANEL_WIDTH = (int) (300 * SCALE);
 //	public final static int CODE_PANEL_HEIGHT = (int) (80 * SCALE);
+	
+	
+	 private float interpolation;
+	
 	
 	public Game() {
 

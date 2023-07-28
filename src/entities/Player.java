@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.TimerTask;
 
-import java.util.Timer;
+import javax.swing.Timer;
 
 import audio.AudioPlayer;
 import gameStates.Playing;
@@ -87,6 +87,9 @@ public class Player extends Entity {
 	private int powerGrowTick;
 
 	private Robot robot;
+
+	private Timer movementTimer;
+	private int movementSpeed = 100;
 
 	public Player(float x, float y, int width, int height, Playing playing) {
 		super(x, y, width, height);
@@ -414,28 +417,28 @@ public class Player extends Entity {
 	public void move(ArrayList<String> correctedOrder) {
 
 		for (String codeBlockOrder : correctedOrder) {
-			
+
 			switch (codeBlockOrder) {
 
 			case "MrPigy.moveToClosestThree();":
 //				setRight(true);
-				setMoveRight(true);
+//				setMoveRight(true);
 //				try {
 //					Thread.sleep(2000);
 //				} catch (InterruptedException e) {
 //					e.printStackTrace();
 //				}
-				setMoveRight(false);
+				setMoveRight(10);
 				break;
 
 			case "MrPigy.jump(1);":
 				setJump(true);
-				
+
 				break;
 
 			case "MrPigy.attack(1);":
 				setAttacking(true);
-				
+
 				break;
 			}
 
@@ -443,16 +446,27 @@ public class Player extends Entity {
 
 	}
 
-	private void setMoveRight(boolean playerWillMove) {
-		
-		if(playerWillMove) {
-		
-			this.updateXPos(0.75f);
-			return;
+	private void setMoveRight(int speed) {
+
+		if (movementTimer != null && movementTimer.isRunning()) {
+			movementTimer.stop();
 		}
-		
+
+		// Create a new timer with the movement speed
+		movementTimer = new Timer(movementSpeed, e -> {
+//	            setRight(false);
+			for (int i = 0; i < 3; i++) {
+				updateXPos(speed);
+			}
+			// Stop the movement timer after the specified time
+			movementTimer.stop();
+		});
+
+		// Start the timer
+		movementTimer.start();
+
 		return;
-		
+
 	}
 
 	private void updatePos() {

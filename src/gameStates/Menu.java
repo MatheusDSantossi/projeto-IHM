@@ -146,11 +146,12 @@ public class Menu extends State implements StateMethods {
 
 					mb.applyGameState();
 
-				if (mb.getState() == GameState.PLAYING)
+				if (mb.getState() == GameState.PLAYING) {
 					game.getAudioPlayer().setLevelSong(game.getPlaying().getLevelManager().getLevelIndex());
 				
 //				game.getPlaying().initializeCodePanel(); // Call the method to initialize CodePanel
-				game.getPlaying().initCodePanelElements();
+					game.getPlaying().initCodePanelElements();
+				}
 				
 				break;
 			}
